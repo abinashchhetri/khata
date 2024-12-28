@@ -1,17 +1,30 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@* <div class="flex"> *@
+@*     <div class="sidebar bg-info w-25"> *@
+@*         <NavMenu /> *@
+@*     </div> *@
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+@*     <main class="w-75"> *@
+@*         <div class="top-row px-4"> *@
+@*             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a> *@
+@*         </div> *@
 
-        <article class="content px-4">
-            @Body
-        </article>
+@*         <article class="content px-4 bg-danger"> *@
+@*             @Body *@
+@*         </article> *@
+@*     </main> *@
+@* </div> *@
+
+
+<div style=" height:100vh; width:100%; display:flex;justify-content:space-between;  ">
+
+    @* sidebar *@
+  <NavMenu/>
+
+
+    @* contentlayout *@
+    <main style="padding-top:13px; padding-inline:63px; " class="w-100 h-100  d-flex justify-content-center">
+        @Body
     </main>
 </div>

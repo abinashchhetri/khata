@@ -11,7 +11,9 @@ namespace khata
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Regular.ttf", "PublicSans");
+                    fonts.AddFont("PublicSans-VariableFont_wght.ttf", "MainFont");
+                    fonts.AddFont("EBGaramond-VariableFont_wght.ttf", "LogoFont");
                 });
 
             builder.Services.AddMauiBlazorWebView();
