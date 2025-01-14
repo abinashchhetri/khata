@@ -91,7 +91,10 @@
                                 <td style="color:#DC143C">Not Cleared</td>
                             }
 
-                            <td style="display:flex;justify-content:center;  align-items:center; gap:5px;"> <button style="border:none; background-color:transparent"><img src="images/edit.png" alt="edit" /> </button> <button style="border:none; background-color:transparent"><img src="images/delete.png" alt="delete" /></button></td>
+                            <td style="display:flex;justify-content:center;  align-items:center; gap:5px;">
+                                <button style="border:none; background-color:transparent"><img src="images/edit.png" alt="edit" /> </button>
+                                <button @onclick="() => HandleDelete(AllDebts[i]) " style="border:none; background-color:transparent"><img src="images/delete.png" alt="delete" /></button>
+                                </td>
                         </tr>
                     }
                 }
@@ -120,7 +123,7 @@
                 <input style="width:100%" type="text" @bind="Amount" placeholder="Amount" required />
                 <input type="text" style="width:100%" @bind="Note" placeholder="Note" />
                 <input type="text" style="width:100%" @bind="Source" placeholder="Source" required />
-                
+
 
 
 
@@ -147,8 +150,36 @@
 }
 
 
+@if (showDeleteDialogueBox)
+{
+    <div  class="deleteBox">
+        <div style="min-height:30%; display:flex; justify-content:center; align-items:center; flex-direction:column" class="dialog-box">
+            <span>
+                <button style="position: absolute;
+        top: 10px;
+        right: 10px;" @onclick="displayDeleteDialogueBox">
+                    <img src="images/Close.png" alt="X" />
+                </button>
+            </span>
+
+            <h1>
+                Are you sure you want to <strong>Delete</strong> @debtToDelete
+            </h1>
+            <h3>The selected debt will be permanently deleted and can't be undone</h3>
+
+
+            <button @onclick="() => DeleteDebt(debtToDelete)">
+                Delete
+            </button>
+        </div>
+    </div>
+}
+
+
 @code {
     private bool showDialogueBox = false;
+    private bool showDeleteDialogueBox = false;
+    private DebtModel debtToDelete;
 
     private List<string> tags = new List<string>
 {
@@ -174,6 +205,11 @@
     private List<DebtModel> AllDebts = DebtService.Debts;
 
 
+    private void HandleDelete(DebtModel debt)
+    {
+        debtToDelete = debt;
+        displayDeleteDialogueBox();
+    }
 
 
 
@@ -185,16 +221,22 @@
 
 
 
-
-    public void displayDialogueBox()
+    private void displayDialogueBox()
     {
         showDialogueBox = !showDialogueBox;
+
+
+    } 
+
+    private void displayDeleteDialogueBox()
+    {
+        showDeleteDialogueBox = !showDeleteDialogueBox;
 
 
     }
 
 
-    public void AddDebts()
+    private void AddDebts()
     {
         DebtModel debt = new DebtModel(Title, Amount, Source, SelectedTag, Note);
         DebtService.AddDebt(debt);
@@ -206,6 +248,14 @@
         Source = "";
 
     }
+
+    private void DeleteDebt(DebtModel debt)
+    {
+        DebtService.DeleteDebt(debt);
+        showDeleteDialogueBox = !showDeleteDialogueBox;
+    }
+
+    
 
 
 

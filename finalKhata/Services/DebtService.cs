@@ -23,6 +23,14 @@ namespace finalKhata.Services
 
         }
 
+
+        public static void DeleteDebt(DebtModel debt)
+        {
+            UserService.User.TotalDebt -= debt.Amount ;
+            UserService.User.TotalIncome -= debt.Amount ;
+            Debts.Remove(debt);
+        }
+
         public void GetSavedDebt()
         {
             string json = File.ReadAllText(DebtsFilePath);
@@ -36,6 +44,8 @@ namespace finalKhata.Services
             File.WriteAllText(DebtsFilePath, json);
 
         }
+
+
 
         
 
