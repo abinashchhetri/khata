@@ -19,7 +19,10 @@
     <div style="box-shadow: -1px 2px 7.6px -1px rgba(0, 0, 0, 0.25);
     border-radius:7px;  background: #FEFEFF; width:100%" class="tableDiv">
         <div style="padding: 32px ; display:flex; justify-content:space-between; align-items:center; " class="tableDivHeader">
-            <input type="text" placeholder="Search Expense">
+            <div>
+                <input type="text" placeholder="Search Income" @bind="searchString">
+                <button style="padding:7px 8px;  background-color:transparent; border-radius: 7px;   " @onclick="searchDebt">🔍</button>
+            </div>
 
             <span>
                 <button @onclick="displayDialogueBox" style="background-color:transparent; border:solid 2px #D1D0D4; border-radius:5px; padding:9px 10px;"><img src="images/add.png" alt="+" /></button>
@@ -89,7 +92,7 @@
             <form style="display:flex; flex-direction:column; gap:50px; width:100%;  text-align:center; justify-content:center; align-items:center; " >
 
                 <input style="width:100%" type="text" @bind="Title" placeholder="Title" required />
-                <input style="width:100%" type="text" @bind="Amount" placeholder="Amount" required />
+                <input style="width:100%" type="number" @bind="Amount" placeholder="Amount" required />
                 <input type="text" style="width:100%" @bind="Note" placeholder="Note" />
 
 
@@ -140,6 +143,7 @@
     private int Amount = 0;
     private string Note = "" ;
     private string SelectedTag = "";
+    private string searchString; 
     private List<IncomeModel> AllIncomes = IncomeService.Incomes;
 
 
@@ -163,5 +167,19 @@
     }
 
 
-    
+    private void searchDebt()
+    {
+        if (string.IsNullOrEmpty(searchString))
+        {
+            // If search string is empty or null, load all debts
+            AllIncomes = IncomeService.Incomes;
+        }
+        else
+        {
+            // Filter debts where the title contains the search string (case-insensitive)
+            AllIncomes = IncomeService.Incomes
+            .Where(income => income.Title != null && income.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
 }
