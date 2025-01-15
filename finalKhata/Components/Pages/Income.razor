@@ -1,0 +1,167 @@
+﻿@page "/income"
+<div class="mainDiv">
+    @* total section *@
+    <div class="totalDiv">
+
+        <div style=" display:flex; flex-direction:column; align-content:start; justify-content: space-between; gap:16px; ">
+
+            <h1 style="font-size: 24px; font-weight:600">NRS 10,000,000</h1>
+            <h3 style="font-size:18px; font-weight:500">Total Income</h3>
+        </div>
+
+
+        <span style="font-size:18px; font-weight:500;  left:0px; height:100%;">2024-12-18 to 2024-12-30</span>
+    </div>
+
+
+    @* tables section  *@
+
+    <div style="box-shadow: -1px 2px 7.6px -1px rgba(0, 0, 0, 0.25);
+    border-radius:7px;  background: #FEFEFF; width:100%" class="tableDiv">
+        <div style="padding: 32px ; display:flex; justify-content:space-between; align-items:center; " class="tableDivHeader">
+            <input type="text" placeholder="Search Expense">
+
+            <span>
+                <button @onclick="displayDialogueBox" style="background-color:transparent; border:solid 2px #D1D0D4; border-radius:5px; padding:9px 10px;"><img src="images/add.png" alt="+" /></button>
+
+                <select style="padding: 9px; border-radius: 5px; border:solid 2px #D1D0D4; margin-left:15px; ">
+                    <option value="all">All</option>
+                    <option value="priceAsc">Price: Low to High</option>
+                    <option value="priceDesc">Price: High to Low</option>
+                    <option value="dateAsc">Date: Oldest to Newest</option>
+                    <option value="dateDesc">Date: Newest to Oldest</option>
+                </select>
+            </span>
+
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Income</th>
+                    <th>Date</th>
+                    <th>Note</th>
+                    <th>Tag</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (AllIncomes == null)
+                {
+                    <tr style="width:100%; display:flex; align-items:center; justify-content:center; text-align:center">No Income History</tr>
+                }
+                else{
+
+                    for (int i = 0; i < AllIncomes.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@(AllIncomes[i].Title)</td>
+                            <td>@(AllIncomes[i].IncomeDate)</td>
+                            <td>@(AllIncomes[i].Note)</td>
+                            <td>@(AllIncomes[i].SelectedTag)</td>
+
+                            <td>@(AllIncomes[i].Amount)</td>
+                        </tr>
+                    }
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+
+@* add income dialogue box *@
+@if (showDialogueBox)
+{
+    <div style="padding:20px 60px; width:50%; min-height:100%;  background-color: #8F85F3; position:absolute; top:0px; right:0px; display:flex; flex-direction:column; justify-content:center; align-items:center;  " class="dialogueBox">
+        <button @onclick="displayDialogueBox" style="background-color:transparent; border:solid 2px #D1D0D4; border-radius:5px; padding:9px 10px; position:absolute; top:100px; right:30px;">
+            <img src="images/Close.png" alt="X" />
+        </button>
+
+        <div style="width:100%">
+            <form style="display:flex; flex-direction:column; gap:50px; width:100%;  text-align:center; justify-content:center; align-items:center; " >
+
+                <input style="width:100%" type="text" @bind="Title" placeholder="Title" required />
+                <input style="width:100%" type="text" @bind="Amount" placeholder="Amount" required />
+                <input type="text" style="width:100%" @bind="Note" placeholder="Note" />
+
+
+
+
+                <select style="padding: 9px; width:100%; border-radius: 5px; border:solid 2px #D1D0D4;   color: #4A4655;
+                    background-color: #fff;
+                    font-weight:500; font-size:18px; " @bind="SelectedTag" >
+
+                    <option value="">tags</option> 
+                    @for (int i = 0; i < tags.Count; i++)
+                    {
+                        <option value=@tags[i]>@tags[i].ToUpper()</option>
+                    }
+
+
+
+                </select>
+
+
+                <button  @onclick="AddIncome" style=" padding: 10px 10px; width:40%; border-radius:7px; border:none; background-color:  #4A4655; color:white ">Add Expense</button>
+            </form>
+        </div>
+    </div>
+
+}
+
+
+@code {
+    private bool showDialogueBox = false;
+
+    private List<string> tags = new List<string>
+{
+    "Yearly",
+    "Monthly",
+    "Food",
+    "Drinks",
+    "Clothes",
+    "Gadgets",
+    "Miscellaneous",
+    "Fuel",
+    "Rent",
+    "EMI",
+    "Party"
+};
+
+    private string Title = "";
+    private int Amount = 0;
+    private string Note = "" ;
+    private string SelectedTag = "";
+    private List<IncomeModel> AllIncomes = IncomeService.Incomes;
+
+
+    public void displayDialogueBox()
+    {
+        showDialogueBox = !showDialogueBox;
+
+
+    }
+
+
+    public void AddIncome() 
+    {
+        IncomeModel income = new IncomeModel(Title, Amount, SelectedTag, Note);
+        IncomeService.AddIncome(income);
+
+        Title = "";
+        Amount = 0;
+        SelectedTag = "";
+        Note = "";
+    }
+
+
+    
+}

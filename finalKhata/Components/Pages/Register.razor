@@ -1,0 +1,68 @@
+﻿
+<div style=" position: absolute;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: mediumpurple;
+    top: 0px;
+    right: 0px;
+    z-index: 100;
+    display:flex;
+    justify-content:center;
+    align-items:center;" class="registerPage">
+    <form style="width:50%; min-height:60%; display: flex; flex-direction:column; justify-content:center; align-items:center; background-color:burlywood; gap:50px;" class="registerForm">
+        <input style="width:70%" @bind="UserName"  placeholder="Enter Your User Name" type="text" required />
+        <input @bind="Password" style="width:70%" placeholder="Enter you password" required type="password" />
+
+        <div style="width:100%; display:flex; justify-content:center; gap:50px; align-items:center;">
+            <h2>Currency</h2>
+
+            <select style="padding: 9px; width:50%; border-radius: 5px; border:solid 2px #D1D0D4;   color: #4A4655;
+                    background-color: #fff;
+                    font-weight:500; font-size:18px; " @bind="SelectedCurrency">
+
+                @foreach (KeyValuePair<string, string > currency in countryCurrencies )
+                {
+                    <option value=@currency.Value >@currency.Key</option>
+
+                }
+            </select>
+        </div>
+
+
+        <button @onclick="registerUser" style=" padding: 10px 10px; width:40%; border-radius:7px; border:none; background-color:  #4A4655; color:white">Register</button>
+    </form>
+</div>
+
+
+@code {
+    public string UserName;
+    public string Password;
+
+    public Dictionary<string, string> countryCurrencies = new Dictionary<string, string>
+        {
+            { "Nepal", "NPR" },
+            { "United States", "USD" },
+            { "India", "INR" },
+            { "United Kingdom", "GBP" },
+            { "Japan", "JPY" },
+            { "Australia", "AUD" },
+            { "Canada", "CAD" },
+            { "China", "CNY" },
+            { "Germany", "EUR" },
+            { "South Africa", "ZAR" },
+            { "Brazil", "BRL" },
+            { "Russia", "RUB" },
+            { "Saudi Arabia", "SAR" }
+        };
+
+    public string SelectedCurrency = "";
+
+    public void registerUser()
+    {
+
+        UserModel user = new UserModel(UserName, Password, SelectedCurrency);
+        UserService userService = new UserService();
+        userService.RegisterUser(user);
+    }
+
+}

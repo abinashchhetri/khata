@@ -1,0 +1,33 @@
+﻿<div class="top-row ps-3 navbar navbar-dark" style=" background-color: #FEFEFF; " >
+    <div class="container-fluid">
+        <a class="navbar-brand" style="color: #7367F0; font-size:48px; display:flex; justify-content:center; align-item:center; width:100%; font-weight:700; letter-spacing:4px " href="">Khata</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav style="display:flex; justify-content:space-between; align-items:center; width:100%;" class="flex-column">
+        <div class="nav-item px-3  " style="display:flex; justify-content:space-between; align-items:center; width:100%;margin-top:10px;"  >
+            <NavLink class="nav-link" style=" color:#4A4655; font-size:1.125rem; display:flex; font-weight:600; gap:10px; justify-content:center; align-item:center;"  href="" Match="NavLinkMatch.All">
+                <span class="sideLink" aria-hidden="true"> <img src="images/dashbord.png" alt="" /> </span> Dashboard
+            </NavLink>
+        </div>
+        <div class="nav-item px-3" style="display:flex; justify-content:space-between; align-items:center; width:100%;margin-top:10px;">
+            <NavLink  style=" color:#4A4655; font-size:1.125rem; display:flex; font-weight:600; gap:10px; justify-content:center; align-item:center;" class="nav-link" href="/income">
+                <span class="sideLink " aria-hidden="true"><img src="images/income.png" alt="" /></span> Income
+            </NavLink>
+        </div>
+        <div class="nav-item px-3" style="display:flex; justify-content:space-between; align-items:center; width:100%;margin-top:10px;">
+            <NavLink style=" color:#4A4655; font-size:1.125rem; display:flex; font-weight:600; gap:10px; justify-content:center; align-item:center;" class="nav-link" href="expense">
+                <span class="sideLink" aria-hidden="true"><img src="images/Expense.png" alt="" /></span> Expense
+            </NavLink>
+        </div>
+
+         <div class="nav-item px-3" style="display:flex; justify-content:space-between; align-items:center; width:100%;margin-top:10px;">
+            <NavLink style=" color:#4A4655; font-size:1.125rem; display:flex; font-weight:600; gap:10px; justify-content:center; align-item:center;" class="nav-link" href="weather">
+                <span class="sideLink" aria-hidden="true"><img  src="images/debt.png" alt="" /></span> Debt
+            </NavLink>
+        </div>
+    </nav>
+</div>
