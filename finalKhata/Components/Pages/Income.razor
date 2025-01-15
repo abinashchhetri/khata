@@ -63,7 +63,7 @@
                             <td>@(AllIncomes[i].Note)</td>
                             <td>@(AllIncomes[i].SelectedTag)</td>
 
-                            <td>@(AllIncomes[i].Amount)</td>
+                            <td style="color:green" >@(AllIncomes[i].Amount)</td>
                         </tr>
                     }
                 }
@@ -110,7 +110,7 @@
                 </select>
 
 
-                <button  @onclick="AddIncome" style=" padding: 10px 10px; width:40%; border-radius:7px; border:none; background-color:  #4A4655; color:white ">Add Expense</button>
+                <button  @onclick="AddIncome" style=" padding: 10px 10px; width:40%; border-radius:7px; border:none; background-color:  #4A4655; color:white ">Add Income</button>
             </form>
         </div>
     </div>
