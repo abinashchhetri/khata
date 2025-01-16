@@ -1,16 +1,30 @@
-﻿@page "/debt"
+﻿@page "/debt"  
 <div class="mainDiv">
     @* total section *@
     <div class="totalDiv">
 
         <div style=" display:flex; flex-direction:column; align-content:start; justify-content: space-between; gap:16px; ">
 
-            <h1 style="font-size: 24px; font-weight:600">NRS 10,000,000</h1>
+            <h1 style="font-size: 24px; font-weight:600">@UserService.User.Currency @AllDebts.Sum(debt => debt.Amount)</h1>
             <h3 style="font-size:18px; font-weight:500">Total Debt</h3>
         </div>
 
 
-        <span style="font-size:18px; font-weight:500;  left:0px; height:100%;">2024-12-18 to 2024-12-30</span>
+        <span style="font-size:18px; font-weight:500;  left:0px; height:100%;">
+
+            @if(AllDebts.Count == 0){
+                <p>----/--/-- to  ----/--/-- </p>
+            }
+            else
+            {
+                <p>
+                    @AllDebts[0].ReceivedDate
+                    to @AllDebts[AllDebts.Count - 1].ReceivedDate
+                </p> 
+
+            }
+
+        </span>
     </div>
 
 
@@ -28,7 +42,9 @@
             <span>
                 <button @onclick="displayDialogueBox" style="background-color:transparent; border:solid 2px #D1D0D4; border-radius:5px; padding:9px 10px;"><img src="images/add.png" alt="+" /></button>
 
-                <select style="padding: 9px; border-radius: 5px; border:solid 2px #D1D0D4; margin-left:15px; ">
+
+
+                <select @onchange="(e) => displayData(e.Value.ToString())" style="padding: 9px; border-radius: 5px; border:solid 2px #D1D0D4; margin-left:15px;">
                     <option value="all">All</option>
                     <option value="priceAsc">Price: Low to High</option>
                     <option value="priceDesc">Price: High to Low</option>
@@ -43,10 +59,10 @@
             <thead>
                 <tr>
                     <th>S.No</th>
-                    <th>Expense</th>
+                    <th>Debt</th>
                     <th>Source</th>
                     <th>Received Date</th>
-                    <th>Cleared Date</th>
+                    <th>Due Date</th>
                     <th>Note</th>
                     <th>Tag</th>
                     <th>Amount</th>
@@ -61,31 +77,23 @@
                 }
                 else
                 {
-
-                    for (int i = 0; i < AllDebts.Count; i++)
-
-
-
+                    foreach (DebtModel debt in AllDebts)
                     {
                         <tr>
-                            <td>@(i + 1)</td>
-                            <td>@(AllDebts[i].Title)</td>
-                            <td>@(AllDebts[i].Source)</td>
-                            <td>@(AllDebts[i].ReceivedDate)</td>
+                            <td>@debt.id</td>
+                            <td>@(debt.Title)</td>
+                            <td>@(debt.Source)</td>
+                            <td>@(debt.ReceivedDate)</td>
 
-                            @if (AllDebts[i].isPaid)
-                            {
 
-                                <td>@(AllDebts[i].ClearedDate)</td>
-                            }
-                            else
-                            {
-                                <td> --- </td>
-                            }
-                            <td>@(AllDebts[i].Note)</td>
-                            <td>@(AllDebts[i].Amount)</td>
 
-                            @if (AllDebts[i].isPaid)
+                            <td>@(debt.DueDate)</td>
+
+
+                            <td>@(debt.Note)</td>
+                            <td>@(debt.Amount)</td>
+
+                            @if (debt.isPaid)
                             {
 
                                 <td style="color:green">Cleared</td>
@@ -96,11 +104,16 @@
                             }
 
                             <td style="display:flex;justify-content:center;  align-items:center; gap:5px;">
-                                <button style="border:none; background-color:transparent"><img src="images/edit.png" alt="edit" /> </button>
-                                <button @onclick="() => HandleDelete(AllDebts[i]) " style="border:none; background-color:transparent"><img src="images/delete.png" alt="delete" /></button>
+                                @if(!debt.isPaid){
+
+                                    <button @onclick="() => handleEdit(debt)" style="border:none; background-color:transparent"><img src="images/edit.png" alt="edit" /> </button>
+                                }
+
+                                <button @onclick="() => HandleDelete(debt) " style="border:none; background-color:transparent"><img src="images/delete.png" alt="delete" /></button>
                             </td>
                         </tr>
                     }
+
                 }
 
 
@@ -125,6 +138,7 @@
 
                 <input style="width:100%" type="text" @bind="Title" placeholder="Title" required />
                 <input style="width:100%" type="number" @bind="Amount" placeholder="Amount" required />
+                <input style="width:100%" type="date" @bind="dueDate" placeholder="Due Date" required />
                 <input type="text" style="width:100%" @bind="Note" placeholder="Note" />
                 <input type="text" style="width:100%" @bind="Source" placeholder="Source" required />
 
@@ -167,7 +181,7 @@
             </span>
 
             <h1>
-                Are you sure you want to <strong>Delete</strong> @debtToDelete
+                Are you sure you want to Delete<strong>@debtToDelete.Title</strong>
             </h1>
             <h3>The selected debt will be permanently deleted and can't be undone</h3>
 
@@ -180,11 +194,54 @@
 }
 
 
+
+
+@if (showEditDialogueBox)
+{
+    <div class="deleteBox">
+
+        <span>
+            <button style="position: absolute;
+        top: 10px;
+        right: 10px;" @onclick="displayEditDialogueBox">
+                <img src="images/Close.png" alt="X" />
+            </button>
+        </span>
+
+        <div style="min-height:30%; display:flex; justify-content:center; align-items:center; flex-direction:column" class="dialog-box">
+
+            <form style="display:flex; flex-direction:column; gap:50px; width:100%;  text-align:center; justify-content:center; align-items:center; ">
+
+                <h1>Are you sure you want to clear the debt of @debtToEdit.Amount,<br /> 
+
+                    provided by @(debtToEdit.Source)
+
+                </h1>
+
+
+                <button style="background-color:#7367F0" @onclick="() => payDebt(debtToEdit)">
+                    Pay Debt
+                </button>
+            </form>
+
+            @if (debtToEdit.Amount > UserService.User.TotalIncome)
+            {
+
+                <p style="color: red;">Insufficent balance</p>
+            }
+
+        </div>
+    </div>
+}
+
+
 @code {
     private bool showDialogueBox = false;
     private bool showDeleteDialogueBox = false;
+    private bool showEditDialogueBox = false;
     private DebtModel debtToDelete;
     private string searchString;
+    private DebtModel debtToEdit;
     private List<string> tags = new List<string>
 {
     "Yearly",
@@ -205,18 +262,39 @@
     private string Note = "";
     private string SelectedTag = "";
     private string Source = "";
-    
+    private DateTime dueDate;
+    private string errorMessage = "";
 
-    private List<DebtModel> AllDebts = DebtService.Debts;
+
+    private List<DebtModel> AllDebts = getALlDebts();
+
+    private static List<DebtModel> getALlDebts()
+    {
+        Data data = new Data();
+        return data.debts;
+
+    }
 
 
     private void HandleDelete(DebtModel debt)
     {
         debtToDelete = debt;
         displayDeleteDialogueBox();
+        AllDebts = DebtService.Debts;
     }
 
+    private void handleEdit(DebtModel debt)
+    {
+       
+            debtToEdit = debt;
+            displayEditDialogueBox();
+            AllDebts = DebtService.Debts;
+        
 
+
+
+
+    }
 
 
 
@@ -240,24 +318,58 @@
 
     }
 
+    private void displayEditDialogueBox()
+    {
+        showEditDialogueBox = !showEditDialogueBox;
+
+
+    }
+
 
     private void AddDebts()
     {
-        DebtModel debt = new DebtModel(Title, Amount, Source, SelectedTag, Note);
-        DebtService.AddDebt(debt);
 
-        Title = "";
-        Amount = 0;
-        Note = "";
-        SelectedTag = "";
-        Source = "";
+        if (Title == ""||
+        Amount == 0|| SelectedTag == ""||
+        Source == "")
+        {
+            Console.WriteLine("Please fill up the form properley");
+        }
+        else
+        {
+            DebtModel debt = new DebtModel(Title, Amount, Source, SelectedTag,dueDate, Note);
+            DebtService.AddDebt(debt);
+
+            Title = "";
+            Amount = 0;
+            Note = "";
+            SelectedTag = "";
+            Source = "";
+        }
+
+
 
     }
 
     private void DeleteDebt(DebtModel debt)
     {
+
         DebtService.DeleteDebt(debt);
         showDeleteDialogueBox = !showDeleteDialogueBox;
+    }
+
+    private void payDebt(DebtModel debt)
+    {
+        if(debt.Amount< UserService.User.TotalIncome)
+        {
+
+            DebtService.payDebt(debt);
+        }
+        else
+        {
+            errorMessage = "Insufficent balance";
+        }
+
     }
 
     private void searchDebt()
@@ -276,6 +388,29 @@
         }
     }
 
+    public void displayData(string displayBy)
+    {
 
+        if (displayBy == "priceDesc")
+        {
+            AllDebts = AllDebts.OrderByDescending(e => e.Amount).ToList();
+        }
+        else if (displayBy == "priceAsc")
+        {
+            AllDebts = AllDebts.OrderBy(e => e.Amount).ToList();
+        }
+        else if (displayBy == "dateAsc")
+        {
+            AllDebts= AllDebts.OrderBy(e => e.ReceivedDate).ToList();
+        }
+        else if (displayBy == "dateDesc")
+        {
+            AllDebts = AllDebts.OrderByDescending(e => e.ReceivedDate).ToList();
+        }
+        else
+        {
+            AllDebts = DebtService.Debts; // Default order
+        }
+    }
 
 }

@@ -5,12 +5,25 @@
 
         <div style=" display:flex; flex-direction:column; align-content:start; justify-content: space-between; gap:16px; ">
 
-            <h1 style="font-size: 24px; font-weight:600">NRS 10,000,000</h1>
+            <h1 style="font-size: 24px; font-weight:600">@UserService.User.Currency @AllExpenses.Sum(expense => expense.Amount)</h1>
             <h3 style="font-size:18px; font-weight:500">Total Expense</h3>
         </div>
 
 
-        <span style="font-size:18px; font-weight:500;  left:0px; height:100%;">2024-12-18 to 2024-12-30</span>
+        <span style="font-size:18px; font-weight:500;  left:0px; height:100%;">
+
+            @if(AllExpenses.Count == 0)
+            {
+                <p>----/--/-- to  ----/--/-- </p>
+            }
+            else
+            {
+                <p>
+                    @AllExpenses[0].ExpenseDate to @AllExpenses[AllExpenses.Count - 1].ExpenseDate
+                </p>
+            }
+        </span>
+
     </div>
 
 
@@ -27,7 +40,9 @@
             <span>
                 <button @onclick="displayDialogueBox" style="background-color:transparent; border:solid 2px #D1D0D4; border-radius:5px; padding:9px 10px;"><img src="images/add.png" alt="+" /></button>
 
-                <select style="padding: 9px; border-radius: 5px; border:solid 2px #D1D0D4; margin-left:15px; ">
+
+
+                <select @onchange="(e) => displayData(e.Value.ToString())" style="padding: 9px; border-radius: 5px; border:solid 2px #D1D0D4; margin-left:15px;">
                     <option value="all">All</option>
                     <option value="priceAsc">Price: Low to High</option>
                     <option value="priceDesc">Price: High to Low</option>
@@ -75,7 +90,7 @@
             </tbody>
         </table>
 
-       
+
 
     </div>
 
@@ -95,7 +110,7 @@
             <form style="display:flex; flex-direction:column; gap:50px; width:100%;  text-align:center; justify-content:center; align-items:center; " >
 
                 <input style="width:100%" type="text" @bind="Title" placeholder="Title" required />
-                <input style="width:100%" type="text" @bind="Amount" placeholder="Amount" required />
+                <input style="width:100%" type="number" @bind="Amount" placeholder="Amount" required />
                 <input type="text" style="width:100%" @bind="Note" placeholder="Note" />
 
 
@@ -116,12 +131,12 @@
                 </select>
 
 
-                <button  @onclick="AddExpense" style=" padding: 10px 10px; width:40%; border-radius:7px; border:none; background-color:  #4A4655; color:white ">Add Expense</button>
+                <button  @onclick="handleAddExpense" style=" padding: 10px 10px; width:40%; border-radius:7px; border:none; background-color:  #4A4655; color:white ">Add Expense</button>
             </form>
 
-            @if (!(ExpenseAddMessage == null))
+            @if (UserService.User.TotalIncome < Amount)
             {
-                <h3>@ExpenseAddMessage</h3>
+                <p style="color:red">You do not have enough Balance for this expense</p>
             }
         </div>
     </div>
@@ -162,16 +177,39 @@
 
     }
 
+    void handleAddExpense()
+    {
+        if (Title == "" ||
+        Amount == 0 || SelectedTag == "" 
+        )
+        {
+            ExpenseAddMessage = "Please fill the form Properly";
+        }
+       else if (Amount > UserService.User.TotalIncome)
+        {
+            ExpenseAddMessage = "You do not have enough Balance to Procide this transacton";
+        }
+        else
+        {
+            AddExpense();
+        }
+    }
+
 
     public void AddExpense() 
-    {
-        ExpenseModel expense = new ExpenseModel(Title, Amount, SelectedTag, Note);
-       ExpenseAddMessage =  ExpenseService.AddExpense(expense);
 
-        Title = "";
-        Amount = 0;
-        SelectedTag = "";
-        Note = "";
+    {
+
+        ExpenseModel expense = new ExpenseModel(Title, Amount, SelectedTag, Note);
+        
+        
+            ExpenseAddMessage = ExpenseService.AddExpense(expense);
+            Title = "";
+            Amount = 0;
+            SelectedTag = "";
+            Note = "";
+        
+        
     }
 
     private void searchDebt()
@@ -187,6 +225,32 @@
             AllExpenses = ExpenseService.Expenses
                 .Where(expense => expense.Title != null && expense.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 .ToList();
+        }
+    }
+
+
+    public void displayData(string displayBy)
+    {
+
+        if (displayBy == "priceDesc")
+        {
+            AllExpenses = AllExpenses.OrderByDescending(e => e.Amount).ToList();
+        }
+        else if (displayBy == "priceAsc")
+        {
+            AllExpenses = AllExpenses.OrderBy(e => e.Amount).ToList();
+        }
+        else if (displayBy == "dateAsc")
+        {
+            AllExpenses = AllExpenses.OrderBy(e => e.ExpenseDate).ToList();
+        }
+        else if (displayBy == "dateDesc")
+        {
+            AllExpenses = AllExpenses.OrderByDescending(e => e.ExpenseDate).ToList();
+        }
+        else
+        {
+            AllExpenses = ExpenseService.Expenses; // Default order
         }
     }
 }

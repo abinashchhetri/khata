@@ -12,7 +12,7 @@ namespace finalKhata.Services
     public class ExpenseService
     {
         public static List<ExpenseModel> Expenses { get; set; } = new List<ExpenseModel>();
-        public static String ExpenseFilePath = FolderAndFiles.ExpenseFilePath;
+        public static string ExpenseFilePath = FolderAndFiles.ExpenseFilePath;
 
         public static string AddExpense(ExpenseModel expense)
         {
@@ -25,23 +25,25 @@ namespace finalKhata.Services
                 UserService.User.TotalIncome -= expense.Amount;
 
 
-                Expenses.Add(expense);
+                
 
-                UserService.User.TotalExpense = UserService.User.TotalIncome + expense.Amount;
+                UserService.User.TotalExpense = UserService.User.TotalExpense + expense.Amount;
+                Expenses.Add(expense);
                 return $" {expense.Amount} added your Expense, your current balance is {UserService.User.TotalIncome}";
+
             }
             
 
         }
 
-        public void GetSavedIncome()
+        public void GetSavedExpense()
         {
             string json = File.ReadAllText(ExpenseFilePath);
             Expenses = JsonSerializer.Deserialize<List<ExpenseModel>>(json);
 
         }
 
-        public void SaveAllIncome()
+        public void SaveAllExpense()
         {
             string json = JsonSerializer.Serialize(Expenses);
             File.WriteAllText(ExpenseFilePath, json);

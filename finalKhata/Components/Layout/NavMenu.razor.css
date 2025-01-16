@@ -107,3 +107,15 @@
         overflow-y: auto;
     }
 }
+
+.filters span{
+    display: flex;
+    justify-content:center;
+    margin-bottom:20px;
+    align-items:center;
+    width:100%;
+}
+
+.filters span input {
+    padding:3px;
+}
