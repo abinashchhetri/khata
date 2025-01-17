@@ -5,12 +5,30 @@
 
         <div style=" display:flex; flex-direction:column; align-content:start; justify-content: space-between; gap:16px; ">
 
-            <h1 style="font-size: 24px; font-weight:600">NRS 10,000,000</h1>
+            <h1 style="font-size: 24px; font-weight:600">
+
+
+                @UserService.User.Currency @AllIncomes.Sum(income => income.Amount)
+
+            </h1>
             <h3 style="font-size:18px; font-weight:500">Total Income</h3>
         </div>
 
 
-        <span style="font-size:18px; font-weight:500;  left:0px; height:100%;">2024-12-18 to 2024-12-30</span>
+        <span style="font-size:18px; font-weight:500;  left:0px; height:100%;">
+
+            @if (AllIncomes.Count == 0)
+            {
+                <p>----/--/-- to  ----/--/-- </p>
+            }
+            else
+            {
+                <p>
+                
+            @AllIncomes[0].IncomeDate to @AllIncomes[AllIncomes.Count - 1].IncomeDate
+                </p>
+            }
+            </span>
     </div>
 
 
@@ -27,7 +45,10 @@
             <span>
                 <button @onclick="displayDialogueBox" style="background-color:transparent; border:solid 2px #D1D0D4; border-radius:5px; padding:9px 10px;"><img src="images/add.png" alt="+" /></button>
 
-                <select style="padding: 9px; border-radius: 5px; border:solid 2px #D1D0D4; margin-left:15px; ">
+               
+
+
+                <select @onchange="(e) => displayData(e.Value.ToString())" style="padding: 9px; border-radius: 5px; border:solid 2px #D1D0D4; margin-left:15px;">
                     <option value="all">All</option>
                     <option value="priceAsc">Price: Low to High</option>
                     <option value="priceDesc">Price: High to Low</option>
@@ -51,7 +72,7 @@
             </thead>
             <tbody>
 
-                @if (AllIncomes == null)
+                @if (AllIncomes.Count == 0)
                 {
                     <tr style="width:100%; display:flex; align-items:center; justify-content:center; text-align:center">No Income History</tr>
                 }
@@ -180,6 +201,31 @@
             AllIncomes = IncomeService.Incomes
             .Where(income => income.Title != null && income.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 .ToList();
+        }
+    }
+
+
+    public void displayData(string displayBy)
+    {
+        if (displayBy == "priceDesc")
+        {
+            AllIncomes = AllIncomes.OrderByDescending(e => e.Amount).ToList();
+        }
+        else if (displayBy == "priceAsc")
+        {
+            AllIncomes = AllIncomes.OrderBy(e => e.Amount).ToList();
+        }
+        else if (displayBy == "dateAsc")
+        {
+            AllIncomes = AllIncomes.OrderBy(e => e.IncomeDate).ToList();
+        }
+        else if (displayBy == "dateDesc")
+        {
+            AllIncomes = AllIncomes.OrderByDescending(e => e.IncomeDate).ToList();
+        }
+        else
+        {
+            AllIncomes = IncomeService.Incomes; // Default order
         }
     }
 }

@@ -45,17 +45,29 @@ namespace finalKhata.Configs
             user.GetUser();
             IncomeService incomeService = new IncomeService();
             incomeService.GetSavedIncome();
+
+            ExpenseService expenseService = new ExpenseService();
+            expenseService.GetSavedExpense();
+
+            DebtService debtService = new DebtService();
+            debtService.GetSavedDebt();
         }
 
-        public static void SaveDataOnExit()
+        public static void SaveDataOnExit(object? sender, EventArgs e)
         {
             UserService userService = new UserService();
             userService.SaveUserData();
 
             IncomeService incomeService = new IncomeService();
             incomeService.SaveAllIncome();
+
+            DebtService debtService = new DebtService();
+            debtService.SaveAllDebt();
+
+            ExpenseService expenseService = new ExpenseService();
+            expenseService.SaveAllExpense();
         }
-        
+
 
     }
 }

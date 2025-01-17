@@ -13,7 +13,7 @@ namespace finalKhata.Services
     {
 
         public static List<DebtModel> Debts { get; set; } = new List<DebtModel>();
-        public static String DebtsFilePath = FolderAndFiles.DebtsFilePath;
+        public static string DebtsFilePath = FolderAndFiles.DebtsFilePath;
 
         public static void AddDebt(DebtModel debt)
         {
@@ -26,12 +26,44 @@ namespace finalKhata.Services
 
         public static void DeleteDebt(DebtModel debt)
         {
-            UserService.User.TotalDebt -= debt.Amount ;
-            UserService.User.TotalIncome -= debt.Amount ;
-            Debts.Remove(debt);
+            if (debt.isPaid)
+            {
+                Debts.Remove(debt);
+            }
+            else
+            {
+                UserService.User.TotalDebt -= debt.Amount;
+                UserService.User.TotalIncome -= debt.Amount;
+                Debts.Remove(debt);
+            }
+
+            
         }
 
-        public void GetSavedDebt()
+       
+
+public static void payDebt(DebtModel debt)
+    {
+        // Find the debt in the list
+        var existingDebt = Debts.FirstOrDefault(d => d.id == debt.id);
+
+        if (existingDebt.Amount < UserService.User.TotalIncome)
+        {
+            // Edit the debt's properties
+            existingDebt.isPaid = true;
+
+            // Update user's total debt and income
+            UserService.User.TotalDebt -= debt.Amount;
+            UserService.User.TotalIncome -= debt.Amount;
+        }
+        else
+        {
+            Console.WriteLine("Debt not found.");
+        }
+    }
+
+
+    public void GetSavedDebt()
         {
             string json = File.ReadAllText(DebtsFilePath);
             Debts = JsonSerializer.Deserialize<List<DebtModel>>(json);

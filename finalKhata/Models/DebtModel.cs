@@ -1,4 +1,5 @@
-﻿using System;
+﻿using finalKhata.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,19 +19,20 @@ namespace finalKhata.Models
         public DateTime ReceivedDate { get; set; } = DateTime.Now;
         public string SelectedTag { get; set; }
 
-        public DateTime ClearedDate { get; set; }
+        public DateTime DueDate { get; set; }
 
 
         public bool isPaid { get; set; } = false;
 
-        public DebtModel(string title, int amount,  string source, string selectedTag, string note = "")
+        public DebtModel(string title, int amount, string source, string selectedTag, DateTime dueDate, string note = "")
         {
-
+            id  = DebtService.Debts.Count + 1;
             Title = title ?? throw new ArgumentNullException(nameof(title));
             Amount = amount;
             Note = note ;
             Source = source ?? throw new ArgumentNullException(nameof(source));
             SelectedTag = selectedTag ?? throw new ArgumentNullException(nameof(selectedTag));
+            DueDate = dueDate; 
         }
     }
 }

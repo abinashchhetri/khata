@@ -14,7 +14,7 @@ namespace finalKhata.Services
     {
 
         public static List<IncomeModel> Incomes { get; set; } = new List<IncomeModel>();
-        public  static String IncomeFilePath = FolderAndFiles.IncomeFilePath;
+        public  static string IncomeFilePath = FolderAndFiles.IncomeFilePath;
 
         public static void AddIncome(IncomeModel income )
         {

@@ -1,4 +1,5 @@
 ﻿using finalKhata.Configs;
+using System.Diagnostics;
 
 
 namespace finalKhata
@@ -8,6 +9,7 @@ namespace finalKhata
         public App()
         {
             InitializeComponent();
+            AppDomain.CurrentDomain.ProcessExit += Configs.FolderAndFiles.SaveDataOnExit;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
@@ -15,12 +17,10 @@ namespace finalKhata
             return new Window(new MainPage()) { Title = "finalKhata" };
         }
 
-    
-        
-
-
-
-
+        protected override void OnSleep()
+        {
+            Debug.WriteLine("---Sleeping----");
+        }
     }
         
 }
