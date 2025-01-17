@@ -33,12 +33,12 @@ else
             </div>
 
             <div>
-                <h3>@(TotalDebts - UserService.User.TotalDebt)</h3>
+                <h3>@( ALlDebts.Where(debt => debt.isPaid).Sum(debt => debt.Amount))</h3>
                 <p>Cleared Debts</p>
             </div>
 
             <div>
-                <h3>@(UserService.User.TotalDebt)</h3>
+                <h3>@(ALlDebts.Sum(debt => debt.Amount) - ALlDebts.Where(debt => debt.isPaid).Sum(debt => debt.Amount))</h3>
 
                 <p>Remaining Debts</p>
             </div>

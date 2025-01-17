@@ -129,7 +129,10 @@
 
 
                 </select>
-
+                <span style="display:flex; gap:50px;">
+                    <p> Custom tag</p>
+                    <input type="text" @bind="SelectedTag" />
+                </span>
 
                 <button  @onclick="handleAddExpense" style=" padding: 10px 10px; width:40%; border-radius:7px; border:none; background-color:  #4A4655; color:white ">Add Expense</button>
             </form>
