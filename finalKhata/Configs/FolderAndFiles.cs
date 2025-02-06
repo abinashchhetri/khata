@@ -19,7 +19,7 @@ namespace finalKhata.Configs
 
         public static void CreateFolder()
         {
-
+            //this is for the user if not registerd
             if (!Directory.Exists(KhataFolderPath))
             {
                 Directory.CreateDirectory(KhataFolderPath);
